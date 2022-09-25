@@ -7,16 +7,16 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component { // этот класс будет отвечать за каждого отдельного персонажа
-    constructor(props) {
-        super(props);
-        this.updateChar(); // вызываем функцию с персонажем
-    }
     state = { // стейт можно объявлять без контекста вызова (только для задачи, для использования он нужен) и конструктора
         char: {},
         loading: true,
         error: false
     }
     marvelService = new MarvelService();
+
+    componentDidMount() {
+        this.updateChar();
+    }
 
     onError = () => {
         this.setState({
