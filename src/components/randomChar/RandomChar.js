@@ -27,12 +27,19 @@ class RandomChar extends Component { // этот класс будет отве�
         })
     }
 
+    onCharLoading = () => {
+        this.setState({
+            loading: true
+        })
+    }
+
     onCharLoaded = (char) => {
         this.setState({char, loading: false, error: false}); // сокращение char: char; как только наши данные загрузятся, то спиннер исчезнет
     }
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); // диапазон рандомных чисел, чтобы персонажи случайно генерировались (гуглится функция за секунд 20)
+        this.onCharLoading();
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)

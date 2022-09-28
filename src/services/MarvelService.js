@@ -29,7 +29,9 @@ class MarvelService {
             description: char.description ? `${char.description.slice(0, 210)}...` : "This character doesn't have a description.", // если описания нет, то мы оповестим об этом пользователя. Также, чтобы описание не было слишком большим, я его ограничил до 210 символов от описания и добавил троеточие 
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension, // мы конкатенируем для того, чтобы получить полностью изображение (его ссылку и разрешение)
             homepage: char.urls[0].url,
-            wiki: char.urls[1].url
+            wiki: char.urls[1].url,
+            id: char.id,
+            comics: char.comics.items
         }
     }
 }
