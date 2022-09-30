@@ -2,7 +2,7 @@ class MarvelService {
     // переменные чтобы соблюдать dry
     _apiBase = 'https://gateway.marvel.com:443/v1/public/'; // переменную (или функцию) мы начинаем с лодаш, чтобы другие программисты понимали, какие данные им лучше не изменять во избежание ошибок в будущем
     _apiKey = 'apikey=a26e0c2c935a8c6a7038f169b279b71c';
-    _baseOffset = 210;
+    _baseOffset = 0;
 
     getResource = async (url) => {
         let res = await fetch(url);

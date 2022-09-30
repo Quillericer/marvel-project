@@ -15,7 +15,7 @@ class ErrorBoundary extends Component {
         if (this.state.error === true) {
             return <ErrorMessage/>
         }
-        return this.props.children; // будут возвращаться компоненты, которые находятся внутри компонента ErrorBoundary (в нашем случае это CharInfo)
+        return this.props.children; // будут возвращаться компоненты, которые находятся внутри компонента ErrorBoundary (в нашем случае это CharInfo,RandomChar,CharList)
     }
 }
 
