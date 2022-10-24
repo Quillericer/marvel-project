@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import MarvelService from '../../services/MarvelService';
+import { useState, useEffect } from 'react';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
@@ -10,36 +10,27 @@ const RandomChar = () => {
 
 
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
-    const marvelService = new MarvelService();
+    useEffect(() => {
+        updateChar();
+        const timerId = setInterval(updateChar, 60000);
+        return () => {
+            clearInterval(timerId);
+        }
+    }, [])
 
-    useEffect(() => updateChar(), [])
 
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
-
-    const onCharLoading = () => {
-        setLoading(true);
-    }
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-        setError(false);
     }
 
     const updateChar = () => {
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); // диапазон рандомных чисел, чтобы персонажи случайно генерировались (гуглится функция за секунд 20)
-        onCharLoading();
-        marvelService
-            .getCharacter(id)
+        getCharacter(id)
             .then(onCharLoaded)
-            .catch(onError) // если произошла ошибка (например, по id из рандомных чисел попалось число, которое не является id персонажа (такого персонажа нет))
     }
 
 
