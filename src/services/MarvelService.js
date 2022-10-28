@@ -23,6 +23,11 @@ const useMarvelService = () => {
         return res.data.results.map(_transformComic);
     }
 
+    const getComic = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+        return _transformComic(res.data.results[0]);
+    }
+
     const _transformCharacter = (char) => {
         return {
             name: char.name,
@@ -38,6 +43,7 @@ const useMarvelService = () => {
     const _transformComic = (comic) => {
         return {
             title: comic.title,
+            id: comic.id,
             description: comic.description ? comic.description : "This comic doesn't have a description.",
             price: comic.prices[0].price ? comic.prices[0].price + '$' : 'Not available',
             thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
@@ -45,7 +51,7 @@ const useMarvelService = () => {
         }
     }
 
-    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics};
+    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComic};
 }
 
 export default useMarvelService; // через этот класс мы получаем данные с marvel api characters
