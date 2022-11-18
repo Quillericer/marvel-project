@@ -1,5 +1,5 @@
 import ComicsList from "../comicsList/ComicsList";
-import AppBanner from '../appBanner/AppBanner';
+import AppBanner from "../appBanner/AppBanner";
 
 const ComicsPage = () => {
     return (
@@ -7,7 +7,6 @@ const ComicsPage = () => {
             <AppBanner/>
             <ComicsList/>
         </>
-        
     )
 }
 

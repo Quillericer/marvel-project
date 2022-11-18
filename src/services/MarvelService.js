@@ -1,57 +1,75 @@
-import useHttp from '../hooks/http.hook';
-
+import {useHttp} from '../hooks/http.hook';
 
 const useMarvelService = () => {
-    const {loading, request, error, clearError} = useHttp(); // деструктуризация
-    // переменные чтобы соблюдать dry
-    const _apiBase = 'https://gateway.marvel.com:443/v1/public/'; // переменную (или функцию) мы начинаем с лодаш, чтобы другие программисты понимали, какие данные им лучше не изменять во избежание ошибок в будущем
-    const _apiKey = 'apikey=a26e0c2c935a8c6a7038f169b279b71c';
-    const _baseOffset = 0;
+    const {loading, request, error, clearError} = useHttp();
 
-    const getAllCharacters = async (offset = _baseOffset) => { //стандартное значение аргумента offset
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+    // ЗДЕСЬ БУДЕТ ВАШ КЛЮЧ, ЭТОТ КЛЮЧ МОЖЕТ НЕ РАБОТАТЬ
+    const _apiKey = 'apikey=c5d6fc8b83116d92ed468ce36bac6c62';
+    const _baseOffset = 210;
+
+
+
+    const getAllCharacters = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
-        return res.data.results.map(_transformCharacter); // формируем массив с новыми объектами
+        return res.data.results.map(_transformCharacter);
     }
 
-    const getCharacter = async (id) => { // асинхронная функция нам нужна для того, чтобы избежать ошибок (мы не знаем, сколько будут передаваться данные из функции getResource)
+    // Вариант модификации готового метода для поиска по имени. 
+    // Вызывать его можно вот так: getAllCharacters(null, name)
+
+    // const getAllCharacters = async (offset = _baseOffset, name = '') => {
+    //     const res = await request(`${_apiBase}characters?limit=9&offset=${offset}${name ? `&name=${name}` : '' }&${_apiKey}`);
+    //     return res.data.results.map(_transformCharacter);
+    // }
+
+    // Или можно создать отдельный метод для поиска по имени
+
+    const getCharacterByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
+    }
+
+    const getCharacter = async (id) => {
         const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
-        return _transformCharacter(res.data.results[0]); // трансформируем данные
+        return _transformCharacter(res.data.results[0]);
     }
 
-    const getAllComics = async (offset = _baseOffset) => {
-        const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
-        return res.data.results.map(_transformComic);
+    const getAllComics = async (offset = 0) => {
+        const res = await request(`${_apiBase}comics?orderBy=issueNumber&limit=8&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformComics);
     }
 
     const getComic = async (id) => {
         const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
-        return _transformComic(res.data.results[0]);
+        return _transformComics(res.data.results[0]);
     }
 
     const _transformCharacter = (char) => {
         return {
+            id: char.id,
             name: char.name,
-            description: char.description ? `${char.description.slice(0, 210)}...` : "This character doesn't have a description.", // если описания нет, то мы оповестим об этом пользователя. Также, чтобы описание не было слишком большим, я его ограничил до 210 символов от описания и добавил троеточие 
-            thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension, // мы конкатенируем для того, чтобы получить полностью изображение (его ссылку и разрешение)
+            description: char.description ? `${char.description.slice(0, 210)}...` : 'There is no description for this character',
+            thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url,
-            id: char.id,
             comics: char.comics.items
         }
     }
 
-    const _transformComic = (comic) => {
+    const _transformComics = (comics) => {
         return {
-            title: comic.title,
-            id: comic.id,
-            description: comic.description ? comic.description : "This comic doesn't have a description.",
-            price: comic.prices[0].price ? comic.prices[0].price + '$' : 'Not available',
-            thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
-            pageCount: comic.pageCount
+            id: comics.id,
+            title: comics.title,
+            description: comics.description || 'There is no description',
+            pageCount: comics.pageCount ? `${comics.pageCount} p.` : 'No information about the number of pages',
+            thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
+            language: comics.textObjects.language || 'en-us',
+            price: comics.prices[0].price ? `${comics.prices[0].price}$` : 'not available'
         }
     }
 
-    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComic};
+    return {loading, error, clearError, getAllCharacters, getCharacterByName, getCharacter, getAllComics, getComic}
 }
 
-export default useMarvelService; // через этот класс мы получаем данные с marvel api characters
+export default useMarvelService;

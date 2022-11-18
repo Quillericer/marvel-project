@@ -36,12 +36,15 @@ const CharInfo = (props) => {
         const content = !(loading || error || !char) ? <View char={char}/> : null; // если нет загрузки или ошибки, то у нас будет отрисовываться компонент View
         
         return (
+          <div className="char__wrapper">
             <div className="char__info">
                 {skeleton}
                 {errorMessage}
                 {spinner}
                 {content}
             </div>
+          </div>
+            
         )
     
 }

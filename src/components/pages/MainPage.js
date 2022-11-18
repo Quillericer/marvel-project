@@ -4,12 +4,14 @@ import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import CustomForm from '../form/Form';
 
 import decoration from '../../resources/img/vision.png';
 
 const MainPage = () => {
 
     const [selectedChar, setChar] = useState(null);
+    const [selectedCharName, setCharName] = useState(null);
 
     const onCharSelected = (id) => {
         setChar(id); // значение стейта равно id
@@ -24,9 +26,15 @@ const MainPage = () => {
                 <ErrorBoundary>
                     <CharList onCharSelected={onCharSelected}/>
                 </ErrorBoundary>
-                <ErrorBoundary>
-                    <CharInfo charId={selectedChar}/>
-                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <CustomForm/>
+                    </ErrorBoundary>
+                </div>
+                
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
         </>
