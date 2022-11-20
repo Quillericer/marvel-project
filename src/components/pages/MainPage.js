@@ -12,7 +12,6 @@ import decoration from '../../resources/img/vision.png';
 const MainPage = () => {
 
     const [selectedChar, setChar] = useState(null);
-    const [selectedCharName, setCharName] = useState(null);
 
     const onCharSelected = (id) => {
         setChar(id); // значение стейта равно id

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
+import setContent from "../../utils/setContent";
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -10,7 +9,7 @@ const RandomChar = () => {
 
 
     const [char, setChar] = useState({});
-    const {loading, error, getCharacter, clearError} = useMarvelService();
+    const {getCharacter, clearError, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -31,18 +30,13 @@ const RandomChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); // диапазон рандомных чисел, чтобы персонажи случайно генерировались (гуглится функция за секунд 20)
         getCharacter(id)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
     }
 
 
-        const errorMessage = error ? <ErrorMessage/> : null; // если у нас есть ошибка, то будет отрисован компонент ErrorMessage, иначе мы просто вернем null
-        const spinner = loading ? <Spinner/> : null; // то же самое со спиннером
-        const content = !(loading || error) ? <View char={char}/> : null; // если нет загрузки или ошибки, то у нас будет отрисовываться компонент View
-
         return (
             <div className="randomchar">
-                {errorMessage}
-                {spinner}
-                {content}
+                {setContent(process, View, char)}
                 <div className="randomchar__static">
                     <p className="randomchar__title">
                         Random character for today!<br/>
@@ -60,8 +54,8 @@ const RandomChar = () => {
         )
 }
 
-const View = ({char}) => { // простой рендерящий компонент, который не имеет логики
-    const {name, description, thumbnail, homepage, wiki} = char;
+const View = ({data}) => { // простой рендерящий компонент, который не имеет логики
+    const {name, description, thumbnail, homepage, wiki} = data;
     let imgStyle = {'objectFit' : 'cover'};
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = {'objectFit' : 'contain'};
